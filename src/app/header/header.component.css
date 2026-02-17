@@ -1,0 +1,21 @@
+mat-toolbar {
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.toolbar-title {
+  cursor: pointer;
+  user-select: none;
+}
+
+.toolbar-title:hover {
+  opacity: 0.9;
+}
+
+.toolbar-title.active {
+  font-weight: 600;
+}
