@@ -1,22 +1,30 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Post } from './post.model';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
-  private posts: Post[] = [];
-  private postsUpdated = new Subject<Post[]>();
+  private http = inject(HttpClient);
+  private _posts = signal<Post[]>([]);
+  readonly posts = this._posts.asReadonly();
 
   getPosts() {
-    return [...this.posts];
-  }
-
-  getPostUpdateListener() {
-    return this.postsUpdated.asObservable();
+    this.http.get<{message: string, posts: Post[]}>("http://localhost:3000/api/posts").subscribe((postData) => {
+      this._posts.set(postData.posts);
+    });
   }
 
   addPost(post: Post) {
-    this.posts.push(post);
-    this.postsUpdated.next([...this.posts]);
+    this.http.post<{message: string, post: Post}>("http://localhost:3000/api/posts", post).subscribe((responseData) => {
+      console.log(responseData.message);
+      this._posts.update(posts => [...posts, responseData.post]);
+    });
+  }
+
+  deletePost(postId: string) {
+    this.http.delete<{ message: string }>("http://localhost:3000/api/posts/" + postId).subscribe((response) => {
+      console.log(response.message);
+      this._posts.update(posts => posts.filter(post => post._id !== postId));
+    });
   }
 }

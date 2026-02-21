@@ -1,6 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Post } from '../post.model';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,20 +12,15 @@ import { PostService } from '../post.service';
   styleUrl: './post-list.component.css',
   imports: [MatExpansionModule, MatButtonModule, MatIconModule, CommonModule],
 })
-export class PostListComponent implements OnInit, OnDestroy {
+export class PostListComponent implements OnInit {
   private postService = inject(PostService);
-  private postsSub!: Subscription;
-  posts: Post[] = [];
+  posts = this.postService.posts;
 
   ngOnInit() {
-    this.posts = this.postService.getPosts();
-    this.postsSub = this.postService.getPostUpdateListener()
-      .subscribe((posts: Post[]) => {
-        this.posts = posts;
-      });
+    this.postService.getPosts();
   }
 
-  ngOnDestroy() {
-    this.postsSub.unsubscribe();
+  onDelete(postId: string) {
+    this.postService.deletePost(postId);
   }
 }

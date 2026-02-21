@@ -19,7 +19,6 @@ import { PostService } from '../post.service';
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css'],
 })
-
 export class PostCreateComponent {
   private postService = inject(PostService);
 

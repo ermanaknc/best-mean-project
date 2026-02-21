@@ -1,5 +1,5 @@
-<mat-accordion multi="true" *ngIf="posts.length > 0">
-  <mat-expansion-panel *ngFor="let post of posts">
+<mat-accordion multi="true" *ngIf="posts().length > 0">
+  <mat-expansion-panel *ngFor="let post of posts()">
     <mat-expansion-panel-header>
       {{ post.title }}
     </mat-expansion-panel-header>
@@ -8,10 +8,10 @@
       <button mat-stroked-button color="primary">
         <mat-icon>edit</mat-icon> Edit
       </button>
-      <button mat-stroked-button color="warn">
+      <button mat-stroked-button color="warn" (click)="onDelete(post._id)">
         <mat-icon>delete</mat-icon> Delete
       </button>
     </mat-action-row>
 </mat-expansion-panel>
 </mat-accordion>
-<p class="info-text mat-body-1" *ngIf="posts.length === 0">No posts found. Start by creating a post.</p>
+<p class="info-text mat-body-1" *ngIf="posts().length === 0">No posts found. Start by creating a post.</p>
