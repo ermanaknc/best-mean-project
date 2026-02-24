@@ -1,6 +1,8 @@
 <mat-toolbar>
-  <span class="toolbar-title" routerLink="/" routerLinkActive="active">
-    Best MEAN Project
+  <span class="toolbar-title" routerLink="/">
+    Firs.ty
   </span>
   <span class="spacer"></span>
+  <a mat-button routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">List</a>
+  <a mat-button routerLink="/create" routerLinkActive="active-link">New Post</a>
 </mat-toolbar>

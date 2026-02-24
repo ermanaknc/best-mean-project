@@ -3,6 +3,12 @@
   margin-top: 1rem;
 }
 
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
 .info-text {
   text-align: center;
 }

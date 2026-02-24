@@ -16,6 +16,12 @@ mat-toolbar {
   opacity: 0.9;
 }
 
-.toolbar-title.active {
-  font-weight: 600;
+a[mat-button] {
+  color: white;
+  font-weight: bold;
+}
+
+.active-link {
+  border-bottom: 2px solid white;
+  border-radius: 0;
 }
