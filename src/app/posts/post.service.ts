@@ -9,7 +9,7 @@ export class PostService {
   private http = inject(HttpClient);
   private _posts = signal<Post[]>([]);
   readonly posts = this._posts.asReadonly();
-  
+
   private router = inject(Router);
 
   private _isLoading = signal<boolean>(false);
@@ -34,9 +34,14 @@ export class PostService {
     );
   }
 
-  addPost(post: Post) {
+  addPost(title: string, content: string, image: File) {
+    const postData = new FormData();
+    postData.append('title', title);
+    postData.append('content', content);
+    postData.append('image', image, image.name);
+
     this._isLoading.set(true);
-    this.http.post<{message: string, post: Post}>("http://localhost:3000/api/posts", post).subscribe({
+    this.http.post<{message: string, post: Post}>("http://localhost:3000/api/posts", postData).subscribe({
       next: (responseData) => {
         console.log(responseData.message);
         this._posts.update(posts => [...posts, responseData.post]);
@@ -48,12 +53,22 @@ export class PostService {
     });
   }
 
-  updatePost(post: Post) {
+  updatePost(id: string, title: string, content: string, image: File | string) {
+    let postData: FormData | Post;
+    if (typeof image === 'object') {
+      postData = new FormData();
+      postData.append('title', title);
+      postData.append('content', content);
+      postData.append('image', image, image.name);
+    } else {
+      postData = { _id: id, title, content, imagePath: image };
+    }
+
     this._isLoading.set(true);
-    this.http.put<{ message: string }>("http://localhost:3000/api/posts/" + post._id, post).subscribe({
+    this.http.put<{ message: string, post: Post }>("http://localhost:3000/api/posts/" + id, postData).subscribe({
       next: (response) => {
         console.log(response.message);
-        this._posts.update(posts => posts.map(p => p._id === post._id ? post : p));
+        this._posts.update(posts => posts.map(p => p._id === id ? response.post : p));
         this.router.navigate(['/']);
       },
       complete: () => {

@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import mongoose from 'mongoose';
 import postsRoutes from './routes/posts.js';
 
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/images', express.static(path.join('backend', 'images')));
 app.use('/api/posts', postsRoutes);
 
 export default app;

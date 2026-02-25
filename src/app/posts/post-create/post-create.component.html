@@ -2,36 +2,33 @@
   <mat-spinner></mat-spinner>
 </div>
 <mat-card *ngIf="!isLoading()">
-  <form (ngSubmit)="onSavePost(postForm)" #postForm="ngForm">
+  <form [formGroup]="form" (ngSubmit)="onSavePost()">
     <mat-form-field>
       <mat-label>Post Title</mat-label>
       <input
         matInput
         type="text"
-        name="title"
-        [(ngModel)]="post.title"
-        minlength="3"
-        required
-        #title="ngModel">
-      <mat-error *ngIf="title.invalid">
-        <span *ngIf="title.errors?.['required']">Title is required.</span>
-        <span *ngIf="title.errors?.['minlength']">Title must be at least 3 characters.</span>
-      </mat-error>
+        formControlName="title">
+      <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required.</mat-error>
+      <mat-error *ngIf="form.get('title')?.hasError('minlength')">Title must be at least 3 characters.</mat-error>
     </mat-form-field>
+    <div>
+      <button mat-stroked-button color="primary" type="button" (click)="fileInput.click()">Pick an Image</button>
+      <input type="file" #fileInput (change)="onImagePicked($event)" />
+    </div>
+    <div class="validation-error" *ngIf="form.get('image')?.hasError('invalidMimeType')">
+      <p>Invalid file type! Only PNG, JPEG, GIF, BMP and WEBP formats are allowed.</p>
+    </div>
+    <div class="image-preview" *ngIf="imagePreview && !form.get('image')?.hasError('invalidMimeType')">
+      <img [src]="imagePreview" [alt]="form.value.title">
+    </div>
     <mat-form-field>
       <mat-label>Post Content</mat-label>
       <textarea
         matInput rows="6"
-        type="textarea"
-        name="content"
-        [(ngModel)]="post.content"
-        minlength="5"
-        required
-        #content="ngModel"></textarea>
-      <mat-error *ngIf="content.invalid">
-        <span *ngIf="content.errors?.['required']">Content is required.</span>
-        <span *ngIf="content.errors?.['minlength']">Content must be at least 5 characters.</span>
-      </mat-error>
+        formControlName="content"></textarea>
+      <mat-error *ngIf="form.get('content')?.hasError('required')">Content is required.</mat-error>
+      <mat-error *ngIf="form.get('content')?.hasError('minlength')">Content must be at least 5 characters.</mat-error>
     </mat-form-field>
     <button
       mat-raised-button
