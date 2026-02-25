@@ -35,3 +35,7 @@ mat-expansion-panel-header {
 mat-action-row button + button {
   margin-left: 0.5rem;
 }
+
+mat-paginator {
+  margin-top: 1rem;
+}

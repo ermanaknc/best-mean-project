@@ -27,8 +27,20 @@ const storage = multer.diskStorage({
 const router = Router();
 
 router.get('/', async (req, res) => {
-  const posts = await Post.find();
-  res.json({ message: 'Posts fetched successfully', posts });
+  const pageSize = +req.query.pageSize;
+  const currentPage = +req.query.currentPage;
+
+  const postQuery = Post.find();
+  if (pageSize && currentPage) {
+    postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+  }
+
+  const [posts, totalPosts] = await Promise.all([
+    postQuery,
+    Post.countDocuments(),
+  ]);
+
+  res.json({ message: 'Posts fetched successfully', posts, totalPosts });
 });
 
 router.post('/', multer({ storage }).single('image'), async (req, res) => {

@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { Post } from './post.model';
 import { Router } from '@angular/router';
@@ -15,11 +15,22 @@ export class PostService {
   private _isLoading = signal<boolean>(false);
   readonly isLoading = this._isLoading.asReadonly();
 
-  getPosts() {
+  private _totalPosts = signal<number>(0);
+  readonly totalPosts = this._totalPosts.asReadonly();
+
+  getPosts(pageSize: number, currentPage: number) {
+    const params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+      .set('currentPage', currentPage.toString());
+
     this._isLoading.set(true);
-    this.http.get<{message: string, posts: Post[]}>("http://localhost:3000/api/posts").subscribe({
+    this.http.get<{message: string, posts: Post[], totalPosts: number}>(
+      "http://localhost:3000/api/posts",
+      { params }
+    ).subscribe({
       next: (postData) => {
         this._posts.set(postData.posts);
+        this._totalPosts.set(postData.totalPosts);
       },
       complete: () => {
         this._isLoading.set(false);
@@ -77,16 +88,12 @@ export class PostService {
     });
   }
 
-  deletePost(postId: string) {
+  deletePost(postId: string, pageSize: number, currentPage: number) {
     this._isLoading.set(true);
     this.http.delete<{ message: string }>("http://localhost:3000/api/posts/" + postId).subscribe({
-      next: (response) => {
-        console.log(response.message);
-        this._posts.update(posts => posts.filter(post => post._id !== postId));
+      next: () => {
+        this.getPosts(pageSize, currentPage);
       },
-      complete: () => {
-        this._isLoading.set(false);
-      }
     });
   }
 }
