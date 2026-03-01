@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import Post from '../models/post.js';
+import checkAuth from '../middleware/check-auth.js';
 
 const MIME_TYPE_MAP = {
   'image/png': 'png',
@@ -43,7 +44,7 @@ router.get('/', async (req, res) => {
   res.json({ message: 'Posts fetched successfully', posts, totalPosts });
 });
 
-router.post('/', multer({ storage }).single('image'), async (req, res) => {
+router.post('/', checkAuth, multer({ storage }).single('image'), async (req, res) => {
   const url = `${req.protocol}://${req.get('host')}`;
   const post = new Post({
     title: req.body.title,
@@ -64,7 +65,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', multer({ storage }).single('image'), async (req, res) => {
+router.put('/:id', checkAuth, multer({ storage }).single('image'), async (req, res) => {
   let imagePath = req.body.imagePath;
   if (req.file) {
     const url = `${req.protocol}://${req.get('host')}`;
@@ -78,7 +79,7 @@ router.put('/:id', multer({ storage }).single('image'), async (req, res) => {
   res.json({ message: 'Post updated successfully', post });
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', checkAuth, async (req, res) => {
   await Post.deleteOne({ _id: req.params.id });
   res.json({ message: 'Post deleted' });
 });

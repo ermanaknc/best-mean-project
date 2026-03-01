@@ -1,0 +1,43 @@
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 4rem;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 4rem;
+}
+
+mat-card {
+  width: 100%;
+  max-width: 440px;
+  border-radius: 0;
+  padding: 2rem 2.5rem;
+}
+
+mat-card-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.form-actions button,
+.form-actions a {
+  border-radius: 0 !important;
+  padding: 0 1.5rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}

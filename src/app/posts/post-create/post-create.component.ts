@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -14,7 +13,6 @@ import { mimeTypeValidator } from './mime-type.validator';
   selector: 'app-post-create',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatInputModule,
     MatCardModule,

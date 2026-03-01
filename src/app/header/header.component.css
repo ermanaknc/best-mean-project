@@ -16,7 +16,8 @@ mat-toolbar {
   opacity: 0.9;
 }
 
-a[mat-button] {
+a[mat-button],
+button[mat-button] {
   color: white;
   font-weight: bold;
 }

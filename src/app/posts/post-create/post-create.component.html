@@ -1,38 +1,54 @@
-<div class="spinner-container" *ngIf="isLoading()">
-  <mat-spinner></mat-spinner>
-</div>
-<mat-card *ngIf="!isLoading()">
-  <form [formGroup]="form" (ngSubmit)="onSavePost()">
-    <mat-form-field>
-      <mat-label>Post Title</mat-label>
-      <input
-        matInput
-        type="text"
-        formControlName="title">
-      <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required.</mat-error>
-      <mat-error *ngIf="form.get('title')?.hasError('minlength')">Title must be at least 3 characters.</mat-error>
-    </mat-form-field>
-    <div>
-      <button mat-stroked-button color="primary" type="button" (click)="fileInput.click()">Pick an Image</button>
-      <input type="file" #fileInput (change)="onImagePicked($event)" />
-    </div>
-    <div class="validation-error" *ngIf="form.get('image')?.hasError('invalidMimeType')">
-      <p>Invalid file type! Only PNG, JPEG, GIF, BMP and WEBP formats are allowed.</p>
-    </div>
-    <div class="image-preview" *ngIf="imagePreview && !form.get('image')?.hasError('invalidMimeType')">
-      <img [src]="imagePreview" [alt]="form.value.title">
-    </div>
-    <mat-form-field>
-      <mat-label>Post Content</mat-label>
-      <textarea
-        matInput rows="6"
-        formControlName="content"></textarea>
-      <mat-error *ngIf="form.get('content')?.hasError('required')">Content is required.</mat-error>
-      <mat-error *ngIf="form.get('content')?.hasError('minlength')">Content must be at least 5 characters.</mat-error>
-    </mat-form-field>
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit">{{ mode === 'create' ? 'Save Post' : 'Update Post' }}</button>
-  </form>
-</mat-card>
+@if (isLoading()) {
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+}
+@if (!isLoading()) {
+  <mat-card>
+    <form [formGroup]="form" (ngSubmit)="onSavePost()">
+      <mat-form-field>
+        <mat-label>Post Title</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="title">
+        @if (form.get('title')?.hasError('required')) {
+          <mat-error>Title is required.</mat-error>
+        }
+        @if (form.get('title')?.hasError('minlength')) {
+          <mat-error>Title must be at least 3 characters.</mat-error>
+        }
+      </mat-form-field>
+      <div>
+        <button mat-stroked-button color="primary" type="button" (click)="fileInput.click()">Pick an Image</button>
+        <input type="file" #fileInput (change)="onImagePicked($event)" />
+      </div>
+      @if (form.get('image')?.hasError('invalidMimeType')) {
+        <div class="validation-error">
+          <p>Invalid file type! Only PNG, JPEG, GIF, BMP and WEBP formats are allowed.</p>
+        </div>
+      }
+      @if (imagePreview && !form.get('image')?.hasError('invalidMimeType')) {
+        <div class="image-preview">
+          <img [src]="imagePreview" [alt]="form.value.title">
+        </div>
+      }
+      <mat-form-field>
+        <mat-label>Post Content</mat-label>
+        <textarea
+          matInput rows="6"
+          formControlName="content"></textarea>
+        @if (form.get('content')?.hasError('required')) {
+          <mat-error>Content is required.</mat-error>
+        }
+        @if (form.get('content')?.hasError('minlength')) {
+          <mat-error>Content must be at least 5 characters.</mat-error>
+        }
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit">{{ mode === 'create' ? 'Save Post' : 'Update Post' }}</button>
+    </form>
+  </mat-card>
+}

@@ -1,25 +1,35 @@
-<div class="spinner-container" *ngIf="isLoading()">
-  <mat-spinner></mat-spinner>
-</div>
-<mat-accordion multi="true" *ngIf="!isLoading() && posts().length > 0">
-  <mat-expansion-panel *ngFor="let post of posts()">
-    <mat-expansion-panel-header>
-      {{ post.title }}
-    </mat-expansion-panel-header>
-    <div class="post-image" *ngIf="post.imagePath">
-      <img [src]="post.imagePath" [alt]="post.title">
-    </div>
-    <p>{{ post.content }}</p>
-    <mat-action-row>
-      <button mat-stroked-button color="primary" (click)="onEdit(post._id!)">
-        <mat-icon>edit</mat-icon> Edit
-      </button>
-      <button mat-stroked-button color="warn" (click)="onDelete(post._id!)">
-        <mat-icon>delete</mat-icon> Delete
-      </button>
-    </mat-action-row>
-</mat-expansion-panel>
-</mat-accordion>
+@if (isLoading()) {
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+}
+@if (!isLoading() && posts().length > 0) {
+  <mat-accordion multi="true">
+    @for (post of posts(); track post._id) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          {{ post.title }}
+        </mat-expansion-panel-header>
+        @if (post.imagePath) {
+          <div class="post-image">
+            <img [src]="post.imagePath" [alt]="post.title">
+          </div>
+        }
+        <p>{{ post.content }}</p>
+        @if (isAuthenticated()) {
+          <mat-action-row>
+            <button mat-stroked-button color="primary" (click)="onEdit(post._id!)">
+              <mat-icon>edit</mat-icon> Edit
+            </button>
+            <button mat-stroked-button color="warn" (click)="onDelete(post._id!)">
+              <mat-icon>delete</mat-icon> Delete
+            </button>
+          </mat-action-row>
+        }
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+}
 <mat-paginator
   [hidden]="totalPosts() === 0"
   [length]="totalPosts()"
@@ -28,4 +38,6 @@
   [pageSizeOptions]="pageSizeOptions"
   (page)="onPageChange($event)">
 </mat-paginator>
-<p class="info-text mat-body-1" *ngIf="!isLoading() && posts().length === 0">No posts found. Start by creating a post.</p>
+@if (!isLoading() && posts().length === 0) {
+  <p class="info-text mat-body-1">No posts found. Start by creating a post.</p>
+}

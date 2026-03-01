@@ -1,8 +1,17 @@
 <mat-toolbar>
-  <span class="toolbar-title" routerLink="/">
-    Firs.ty
-  </span>
+  <span class="toolbar-title" routerLink="/">Firs.ty</span>
   <span class="spacer"></span>
   <a mat-button routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">List</a>
-  <a mat-button routerLink="/create" routerLinkActive="active-link">New Post</a>
+  @if (isAuthenticated()) {
+    <a mat-button routerLink="/create" routerLinkActive="active-link">New Post</a>
+  }
+  @if (isAuthenticated()) {
+    <button mat-button (click)="onLogout()">
+      <mat-icon>logout</mat-icon> Logout
+    </button>
+  } @else {
+    <a mat-button routerLink="/login" routerLinkActive="active-link">
+      <mat-icon>login</mat-icon> Login
+    </a>
+  }
 </mat-toolbar>

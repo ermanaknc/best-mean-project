@@ -1,0 +1,63 @@
+@if (isLoading()) {
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+}
+@if (!isLoading()) {
+<div class="signup-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Sign Up</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form #signupForm="ngForm" (ngSubmit)="onSignup(signupForm)">
+        <mat-form-field>
+          <mat-label>E-Mail</mat-label>
+          <input
+            matInput
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+            email
+            #emailInput="ngModel">
+          <mat-icon matPrefix>email</mat-icon>
+          @if (emailInput.hasError('required')) {
+            <mat-error>E-mail is required.</mat-error>
+          }
+          @if (emailInput.hasError('email')) {
+            <mat-error>Please enter a valid e-mail.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            name="password"
+            [(ngModel)]="password"
+            required
+            minlength="6"
+            #passwordInput="ngModel">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (passwordInput.hasError('required')) {
+            <mat-error>Password is required.</mat-error>
+          }
+          @if (passwordInput.hasError('minlength')) {
+            <mat-error>Password must be at least 6 characters.</mat-error>
+          }
+        </mat-form-field>
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit">Sign Up</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+}

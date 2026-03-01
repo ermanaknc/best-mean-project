@@ -4,23 +4,26 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PostService } from '../post.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-post-list',
   standalone: true,
   templateUrl: './post-list.component.html',
   styleUrl: './post-list.component.css',
-  imports: [MatExpansionModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatPaginatorModule, CommonModule],
+  imports: [MatExpansionModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatPaginatorModule],
 })
 export class PostListComponent implements OnInit {
   private postService = inject(PostService);
+  private authService = inject(AuthService);
   private router = inject(Router);
+
   posts = this.postService.posts;
   isLoading = this.postService.isLoading;
   totalPosts = this.postService.totalPosts;
+  isAuthenticated = this.authService.isAuthenticated;
 
   currentPage = 1;
   pageSizeOptions = [2, 5, 10, 25];
