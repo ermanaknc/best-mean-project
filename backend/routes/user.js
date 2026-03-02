@@ -14,14 +14,18 @@ router.post('/signup', async (req, res) => {
     const result = await user.save();
 
     res.status(201).json({
-      message: 'User created',
+      message: 'User created successfully.',
       result: result
     });
 
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(422).json({
+        message: 'This email address is already registered. Please use a different email or log in.'
+      });
+    }
     res.status(500).json({
-      message: 'Creating user failed!',
-      error: err.message
+      message: 'Could not create account. Please try again later.'
     });
   }
 });
@@ -32,12 +36,12 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Auth failed' });
+      return res.status(401).json({ message: 'Invalid email or password. Please check your credentials and try again.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Auth failed' });
+      return res.status(401).json({ message: 'Invalid email or password. Please check your credentials and try again.' });
     }
 
     const token = jwt.sign(
@@ -50,8 +54,7 @@ router.post('/login', async (req, res) => {
 
   } catch (err) {
     res.status(500).json({
-      message: 'Login failed!',
-      error: err.message
+      message: 'Login failed due to a server error. Please try again later.'
     });
   }
 });

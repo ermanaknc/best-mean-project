@@ -41,3 +41,10 @@ button[mat-stroked-button] {
   gap: 1rem;
   margin-top: 1.5rem;
 }
+
+.auth-error {
+  color: #f44336;
+  text-align: center;
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+}

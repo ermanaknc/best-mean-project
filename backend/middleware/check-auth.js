@@ -7,6 +7,6 @@ export default (req, res, next) => {
     req.userData = { email: decoded.email, userId: decoded.userId };
     next();
   } catch (err) {
-    res.status(401).json({ message: 'Auth failed!' });
+    res.status(401).json({ message: 'Authentication failed. Your session may have expired, please log in again.' });
   }
 };
