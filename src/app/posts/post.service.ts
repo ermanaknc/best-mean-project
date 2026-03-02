@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { Post } from './post.model';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
@@ -18,6 +19,8 @@ export class PostService {
   private _totalPosts = signal<number>(0);
   readonly totalPosts = this._totalPosts.asReadonly();
 
+  private apiUrl = `${environment.apiUrl}/api/posts`;
+
   getPosts(pageSize: number, currentPage: number) {
     const params = new HttpParams()
       .set('pageSize', pageSize.toString())
@@ -25,22 +28,21 @@ export class PostService {
 
     this._isLoading.set(true);
     this.http.get<{message: string, posts: Post[], totalPosts: number}>(
-      "http://localhost:3000/api/posts",
+      this.apiUrl,
       { params }
+    ).pipe(
+      finalize(() => this._isLoading.set(false))
     ).subscribe({
       next: (postData) => {
         this._posts.set(postData.posts);
         this._totalPosts.set(postData.totalPosts);
       },
-      complete: () => {
-        this._isLoading.set(false);
-      }
     });
   }
 
   getPost(id: string) {
     this._isLoading.set(true);
-    return this.http.get<{ post: Post }>("http://localhost:3000/api/posts/" + id).pipe(
+    return this.http.get<{ post: Post }>(`${this.apiUrl}/${id}`).pipe(
       finalize(() => this._isLoading.set(false))
     );
   }
@@ -52,15 +54,12 @@ export class PostService {
     postData.append('image', image, image.name);
 
     this._isLoading.set(true);
-    this.http.post<{message: string, post: Post}>("http://localhost:3000/api/posts", postData).subscribe({
-      next: (responseData) => {
-        console.log(responseData.message);
-        this._posts.update(posts => [...posts, responseData.post]);
+    this.http.post<{message: string, post: Post}>(this.apiUrl, postData).pipe(
+      finalize(() => this._isLoading.set(false))
+    ).subscribe({
+      next: () => {
         this.router.navigate(['/']);
       },
-      complete: () => {
-        this._isLoading.set(false);
-      }
     });
   }
 
@@ -76,21 +75,21 @@ export class PostService {
     }
 
     this._isLoading.set(true);
-    this.http.put<{ message: string, post: Post }>("http://localhost:3000/api/posts/" + id, postData).subscribe({
-      next: (response) => {
-        console.log(response.message);
-        this._posts.update(posts => posts.map(p => p._id === id ? response.post : p));
+    this.http.put<{ message: string, post: Post }>(`${this.apiUrl}/${id}`, postData).pipe(
+      finalize(() => this._isLoading.set(false))
+    ).subscribe({
+      next: () => {
+        this._posts.update(posts => posts.map(p => p._id === id ? { ...p, title, content } : p));
         this.router.navigate(['/']);
       },
-      complete: () => {
-        this._isLoading.set(false);
-      }
     });
   }
 
   deletePost(postId: string, pageSize: number, currentPage: number) {
     this._isLoading.set(true);
-    this.http.delete<{ message: string }>("http://localhost:3000/api/posts/" + postId).subscribe({
+    this.http.delete<{ message: string }>(`${this.apiUrl}/${postId}`).pipe(
+      finalize(() => this._isLoading.set(false))
+    ).subscribe({
       next: () => {
         this.getPosts(pageSize, currentPage);
       },

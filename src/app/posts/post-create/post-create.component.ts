@@ -4,6 +4,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { PostService } from '../post.service';
 import { mimeTypeValidator } from './mime-type.validator';
@@ -18,9 +19,10 @@ import { mimeTypeValidator } from './mime-type.validator';
     MatCardModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    MatIconModule,
   ],
   templateUrl: './post-create.component.html',
-  styleUrls: ['./post-create.component.css'],
+  styleUrl: './post-create.component.css',
 })
 export class PostCreateComponent implements OnInit {
   private postService = inject(PostService);

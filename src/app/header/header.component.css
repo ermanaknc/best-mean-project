@@ -1,6 +1,10 @@
 mat-toolbar {
-  background-color: var(--mat-sys-primary);
-  color: var(--mat-sys-on-primary);
+  background: linear-gradient(135deg, #9c0a4e 0%, #c2185b 100%);
+  color: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .spacer {
@@ -10,19 +14,59 @@ mat-toolbar {
 .toolbar-title {
   cursor: pointer;
   user-select: none;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .toolbar-title:hover {
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 a[mat-button],
 button[mat-button] {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  font-size: 0.875rem;
+  min-width: unset;
+  padding: 0 10px;
+  border-radius: 4px;
+  background: transparent;
+  position: relative;
+  transition: color 0.15s;
+}
+
+a[mat-button]::after,
+button[mat-button]::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  background: white;
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+}
+
+a[mat-button]:hover,
+button[mat-button]:hover {
+  background: transparent;
   color: white;
-  font-weight: bold;
+}
+
+a[mat-button]:hover::after,
+button[mat-button]:hover::after {
+  transform: scaleX(1);
 }
 
 .active-link {
-  border-bottom: 2px solid white;
-  border-radius: 0;
+  color: white !important;
+  background: transparent !important;
+  border-bottom: none;
+}
+
+.active-link::after {
+  transform: scaleX(1) !important;
 }

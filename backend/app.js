@@ -6,12 +6,13 @@ import usersRoutes from './routes/user.js';
 
 const app = express();
 
-mongoose.connect("mongodb+srv://ermanaknc:E_e553924385@cluster0.devraqy.mongodb.net/mean-project?retryWrites=true&w=majority")
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB!');
   })
   .catch((err) => {
-    console.log('MongoDB connection failed:', err);
+    console.error('MongoDB connection failed:', err);
+    process.exit(1);
   });
 
 app.use(express.json());

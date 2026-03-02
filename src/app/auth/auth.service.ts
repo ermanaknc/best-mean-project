@@ -1,40 +1,44 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private token: string | null = null;
+  private apiUrl = `${environment.apiUrl}/api/users`;
   private tokenTimer: ReturnType<typeof setTimeout> | null = null;
 
-  readonly isAuthenticated = signal<boolean>(false);
-  readonly isLoading = signal<boolean>(false);
-  readonly userId = signal<string | null>(null);
+  private _isAuthenticated = signal<boolean>(false);
+  readonly isAuthenticated = this._isAuthenticated.asReadonly();
+
+  private _isLoading = signal<boolean>(false);
+  readonly isLoading = this._isLoading.asReadonly();
+
+  private _userId = signal<string | null>(null);
+  readonly userId = this._userId.asReadonly();
 
   signup(email: string, password: string) {
-    this.isLoading.set(true);
+    this._isLoading.set(true);
     this.http
-      .post<{ message: string; result: any }>('http://localhost:3000/api/users/signup', {
-        email,
-        password,
-      })
+      .post<{ message: string; result: any }>(`${this.apiUrl}/signup`, { email, password })
       .subscribe({
         next: () => {
-          this.isLoading.set(false);
+          this._isLoading.set(false);
           this.router.navigate(['/']);
         },
         error: () => {
-          this.isLoading.set(false);
+          this._isLoading.set(false);
         },
       });
   }
 
   login(email: string, password: string) {
-    this.isLoading.set(true);
+    this._isLoading.set(true);
     this.http
-      .post<{ token: string; expiresIn: number; userId: string }>('http://localhost:3000/api/users/login', {
+      .post<{ token: string; expiresIn: number; userId: string }>(`${this.apiUrl}/login`, {
         email,
         password,
       })
@@ -47,15 +51,15 @@ export class AuthService {
             localStorage.setItem('token', token);
             localStorage.setItem('tokenExpiration', expirationDate.toISOString());
             localStorage.setItem('userId', response.userId);
-            this.userId.set(response.userId);
-            this.isAuthenticated.set(true);
+            this._userId.set(response.userId);
+            this._isAuthenticated.set(true);
             this.setAutoLogoutTimer(response.expiresIn);
           }
-          this.isLoading.set(false);
+          this._isLoading.set(false);
           this.router.navigate(['/']);
         },
         error: () => {
-          this.isLoading.set(false);
+          this._isLoading.set(false);
         },
       });
   }
@@ -77,8 +81,8 @@ export class AuthService {
     }
 
     this.token = token;
-    this.userId.set(userId);
-    this.isAuthenticated.set(true);
+    this._userId.set(userId);
+    this._isAuthenticated.set(true);
     this.setAutoLogoutTimer(remainingMs / 1000);
   }
 
@@ -87,8 +91,8 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('tokenExpiration');
     localStorage.removeItem('userId');
-    this.userId.set(null);
-    this.isAuthenticated.set(false);
+    this._userId.set(null);
+    this._isAuthenticated.set(false);
     if (this.tokenTimer) {
       clearTimeout(this.tokenTimer);
       this.tokenTimer = null;
