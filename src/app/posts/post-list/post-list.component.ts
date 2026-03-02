@@ -24,6 +24,7 @@ export class PostListComponent implements OnInit {
   isLoading = this.postService.isLoading;
   totalPosts = this.postService.totalPosts;
   isAuthenticated = this.authService.isAuthenticated;
+  userId = this.authService.userId;
 
   currentPage = 1;
   pageSizeOptions = [2, 5, 10, 25];

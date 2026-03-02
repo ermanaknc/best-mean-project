@@ -16,7 +16,7 @@
           </div>
         }
         <p>{{ post.content }}</p>
-        @if (isAuthenticated()) {
+        @if (isAuthenticated() && post.creator === userId()) {
           <mat-action-row>
             <button mat-stroked-button color="primary" (click)="onEdit(post._id!)">
               <mat-icon>edit</mat-icon> Edit

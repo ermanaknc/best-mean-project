@@ -50,9 +50,9 @@ router.post('/', checkAuth, multer({ storage }).single('image'), async (req, res
     title: req.body.title,
     content: req.body.content,
     imagePath: `${url}/images/${req.file.filename}`,
+    creator: req.userData.userId,
   });
   const savedPost = await post.save();
-  console.log(savedPost);
   res.status(201).json({ message: 'Post added successfully', post: savedPost });
 });
 
@@ -66,6 +66,14 @@ router.get('/:id', async (req, res) => {
 });
 
 router.put('/:id', checkAuth, multer({ storage }).single('image'), async (req, res) => {
+  const existingPost = await Post.findById(req.params.id);
+  if (!existingPost) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+  if (existingPost.creator.toString() !== req.userData.userId) {
+    return res.status(403).json({ message: 'Not authorized to edit this post' });
+  }
+
   let imagePath = req.body.imagePath;
   if (req.file) {
     const url = `${req.protocol}://${req.get('host')}`;
@@ -80,6 +88,13 @@ router.put('/:id', checkAuth, multer({ storage }).single('image'), async (req, r
 });
 
 router.delete('/:id', checkAuth, async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+  if (post.creator.toString() !== req.userData.userId) {
+    return res.status(403).json({ message: 'Not authorized to delete this post' });
+  }
   await Post.deleteOne({ _id: req.params.id });
   res.json({ message: 'Post deleted' });
 });

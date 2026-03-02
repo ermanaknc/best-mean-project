@@ -11,6 +11,7 @@ export class AuthService {
 
   readonly isAuthenticated = signal<boolean>(false);
   readonly isLoading = signal<boolean>(false);
+  readonly userId = signal<string | null>(null);
 
   signup(email: string, password: string) {
     this.isLoading.set(true);
@@ -33,7 +34,7 @@ export class AuthService {
   login(email: string, password: string) {
     this.isLoading.set(true);
     this.http
-      .post<{ token: string; expiresIn: number }>('http://localhost:3000/api/users/login', {
+      .post<{ token: string; expiresIn: number; userId: string }>('http://localhost:3000/api/users/login', {
         email,
         password,
       })
@@ -45,6 +46,8 @@ export class AuthService {
             const expirationDate = new Date(Date.now() + response.expiresIn * 1000);
             localStorage.setItem('token', token);
             localStorage.setItem('tokenExpiration', expirationDate.toISOString());
+            localStorage.setItem('userId', response.userId);
+            this.userId.set(response.userId);
             this.isAuthenticated.set(true);
             this.setAutoLogoutTimer(response.expiresIn);
           }
@@ -60,6 +63,7 @@ export class AuthService {
   autoAuthUser() {
     const token = localStorage.getItem('token');
     const expirationDate = localStorage.getItem('tokenExpiration');
+    const userId = localStorage.getItem('userId');
 
     if (!token || !expirationDate) {
       return;
@@ -73,6 +77,7 @@ export class AuthService {
     }
 
     this.token = token;
+    this.userId.set(userId);
     this.isAuthenticated.set(true);
     this.setAutoLogoutTimer(remainingMs / 1000);
   }
@@ -81,6 +86,8 @@ export class AuthService {
     this.token = null;
     localStorage.removeItem('token');
     localStorage.removeItem('tokenExpiration');
+    localStorage.removeItem('userId');
+    this.userId.set(null);
     this.isAuthenticated.set(false);
     if (this.tokenTimer) {
       clearTimeout(this.tokenTimer);
