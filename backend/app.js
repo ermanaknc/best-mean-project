@@ -28,6 +28,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/images', express.static(path.join('backend', 'images')));
+app.use('/images', express.static(path.join('images')));
 app.use('/api/posts', postsRoutes);
 app.use('/api/users', usersRoutes);
 
